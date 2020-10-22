@@ -1,0 +1,102 @@
+[Project]
+FileName=AES.dev
+Name=AES
+Type=1
+Ver=2
+ObjFiles=
+Includes="D:\桌面\AES(含註解)\AES\Header Files\exceptions";"D:\桌面\AES(含註解)\AES\Header Files\utils"
+Libs="D:\桌面\AES(含註解)\AES\Source Files\exceptions";"D:\桌面\AES(含註解)\AES\Source Files\utils"
+PrivateResource=
+ResourceIncludes=
+MakeIncludes=
+Compiler=
+CppCompiler=
+Linker=
+IsCpp=1
+Icon=
+ExeOutput=
+ObjectOutput=
+LogOutput=
+LogOutputEnabled=0
+OverrideOutput=0
+OverrideOutputName=AES.exe
+HostApplication=
+UseCustomMakefile=0
+CustomMakefile=
+CommandLine=
+Folders="Header Files","Header Files/exceptions","Header Files/utils","Source Files","Source Files/exceptions","Source Files/utils"
+IncludeVersionInfo=0
+SupportXPThemes=0
+CompilerSet=0
+CompilerSettings=0000000000000000000000000
+UnitCount=5
+
+[VersionInfo]
+Major=1
+Minor=0
+Release=0
+Build=0
+LanguageID=1033
+CharsetID=1252
+CompanyName=
+FileVersion=1.0.0.0
+FileDescription=Developed using the Dev-C++ IDE
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+AutoIncBuildNr=0
+SyncProduct=1
+
+[Unit1]
+FileName=main.cpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit2]
+FileName=Header Files\utils\AES.h
+CompileCpp=1
+Folder=Header Files/utils
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=Source Files\utils\AES.cpp
+CompileCpp=1
+Folder=Source Files/utils
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=Header Files\exceptions\AESException.h
+CompileCpp=1
+Folder=Header Files/exceptions
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit5]
+FileName=Source Files\exceptions\AESException.cpp
+CompileCpp=1
+Folder=Source Files/exceptions
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+

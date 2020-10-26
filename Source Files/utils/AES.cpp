@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <algorithm>
+#include <stdio.h>
 
 using namespace std;
 
@@ -188,6 +189,28 @@ void AES::addRoundKey(const int round){
 	}
 }
 
+void AES::addInverseMixColumnRoundKey(const int round){
+	// 要求一個暫存Inverse Mix Column Round key的記憶體 
+	unsigned char * tempRoundKey = new unsigned char[16];
+	
+	// 對Round key做inverse mix column
+	for(int i=0;i<4;i++){
+		// 查表
+		tempRoundKey[i*4] = (this->GMul_0e)[(this->roundKey)[16*round+i*4]] ^ (this->GMul_0b)[(this->roundKey)[16*round+i*4+1]] ^ (this->GMul_0d)[(this->roundKey)[16*round+i*4+2]] ^ (this->GMul_09)[(this->roundKey)[16*round+i*4+3]];
+		tempRoundKey[i*4+1] = (this->GMul_09)[(this->roundKey)[16*round+i*4]] ^ (this->GMul_0e)[(this->roundKey)[16*round+i*4+1]] ^ (this->GMul_0b)[(this->roundKey)[16*round+i*4+2]] ^ (this->GMul_0d)[(this->roundKey)[16*round+i*4+3]];
+		tempRoundKey[i*4+2] = (this->GMul_0d)[(this->roundKey)[16*round+i*4]] ^ (this->GMul_09)[(this->roundKey)[16*round+i*4+1]] ^ (this->GMul_0e)[(this->roundKey)[16*round+i*4+2]] ^ (this->GMul_0b)[(this->roundKey)[16*round+i*4+3]];
+		tempRoundKey[i*4+3] = (this->GMul_0b)[(this->roundKey)[16*round+i*4]] ^ (this->GMul_0d)[(this->roundKey)[16*round+i*4+1]] ^ (this->GMul_09)[(this->roundKey)[16*round+i*4+2]] ^ (this->GMul_0e)[(this->roundKey)[16*round+i*4+3]];
+	}
+	
+	// 將state中個每個值和該輪進行過inverse mix column的key進行XOR運算 
+	for(int i=0;i<16;i++){
+		(this->state)[i] = (this->state)[i] ^ tempRoundKey[i];
+	}
+	
+	// 釋放記憶體
+	delete [] tempRoundKey; 
+}
+
 // AES加密函數 
 void AES::SBoxSubstitution(){
 	// 將state中的每個值進行SBox的查表對應 
@@ -250,6 +273,28 @@ void AES::mixColumn(){
 	
 	// 釋放記憶體 
 	delete [] tempState; 
+}
+void AES::TBoxSubstitution(){
+	
+	// 動態宣告四個暫存值記憶體 
+	unsigned char * tempState = new unsigned char[4];
+	
+	for(int i=0;i<4;i++){
+		// 查表
+		tempState[0] = (unsigned char) ((this->Te_0[(int)(this->state[i*4])][0]) ^ (this->Te_1[(int)(this->state[i*4+1])][0]) ^ (this->Te_2[(int)(this->state[i*4+2])][0]) ^ (this->Te_3[(int)(this->state[i*4+3])][0]));
+		tempState[1] = (unsigned char) ((this->Te_0[(int)(this->state[i*4])][1]) ^ (this->Te_1[(int)(this->state[i*4+1])][1]) ^ (this->Te_2[(int)(this->state[i*4+2])][1]) ^ (this->Te_3[(int)(this->state[i*4+3])][1]));
+		tempState[2] = (unsigned char) ((this->Te_0[(int)(this->state[i*4])][2]) ^ (this->Te_1[(int)(this->state[i*4+1])][2]) ^ (this->Te_2[(int)(this->state[i*4+2])][2]) ^ (this->Te_3[(int)(this->state[i*4+3])][2]));
+		tempState[3] = (unsigned char) ((this->Te_0[(int)(this->state[i*4])][3]) ^ (this->Te_1[(int)(this->state[i*4+1])][3]) ^ (this->Te_2[(int)(this->state[i*4+2])][3]) ^ (this->Te_3[(int)(this->state[i*4+3])][3]));
+		
+		// 賦值 
+		(this->state)[i*4] = tempState[0];
+		(this->state)[i*4+1] = tempState[1];
+		(this->state)[i*4+2] = tempState[2];
+		(this->state)[i*4+3] = tempState[3];
+	}
+	
+	// 釋放記憶體 
+	delete [] tempState;
 }
 
 // AES解密函數
@@ -314,6 +359,29 @@ void AES::inverseMixColumn(){
 	// 釋放記憶體 
 	delete [] tempState; 
 } 
+
+void AES::inverseTBoxSubstitution(){
+	
+	// 動態宣告四個暫存值記憶體 
+	unsigned char * tempState = new unsigned char[4];
+	
+	for(int i=0;i<4;i++){
+		// 查表
+		tempState[0] = (unsigned char) ((this->Td_0[(int)(this->state[i*4])][0]) ^ (this->Td_1[(int)(this->state[i*4+1])][0]) ^ (this->Td_2[(int)(this->state[i*4+2])][0]) ^ (this->Td_3[(int)(this->state[i*4+3])][0]));
+		tempState[1] = (unsigned char) ((this->Td_0[(int)(this->state[i*4])][1]) ^ (this->Td_1[(int)(this->state[i*4+1])][1]) ^ (this->Td_2[(int)(this->state[i*4+2])][1]) ^ (this->Td_3[(int)(this->state[i*4+3])][1]));
+		tempState[2] = (unsigned char) ((this->Td_0[(int)(this->state[i*4])][2]) ^ (this->Td_1[(int)(this->state[i*4+1])][2]) ^ (this->Td_2[(int)(this->state[i*4+2])][2]) ^ (this->Td_3[(int)(this->state[i*4+3])][2]));
+		tempState[3] = (unsigned char) ((this->Td_0[(int)(this->state[i*4])][3]) ^ (this->Td_1[(int)(this->state[i*4+1])][3]) ^ (this->Td_2[(int)(this->state[i*4+2])][3]) ^ (this->Td_3[(int)(this->state[i*4+3])][3]));
+		
+		// 賦值 
+		(this->state)[i*4] = tempState[0];
+		(this->state)[i*4+1] = tempState[1];
+		(this->state)[i*4+2] = tempState[2];
+		(this->state)[i*4+3] = tempState[3];
+	}
+	
+	// 釋放記憶體 
+	delete [] tempState;
+}
 
 
 // 填充 
@@ -508,6 +576,32 @@ void AES::encryptor(){
 		// 輪密鑰加
 		this->addRoundKey(i); 
 	}
+	
+	
+}
+
+void AES::quickEncryptor(){
+	
+	// 第一輪Add Round Key
+	this->addRoundKey(0);
+	
+	// 循環完成剩下輪
+	for(int i=1;i<=this->round;i++){
+		// 列移位 
+		this->shiftRows();
+		
+		// T盒查詢(最後一次只做S盒替換) 
+		if(i==this->round){
+			this->SBoxSubstitution();
+		} else {
+			this->TBoxSubstitution();
+		}
+		
+		// 輪密鑰加
+		this->addRoundKey(i); 
+	}
+	
+	
 }
 
 void AES::ECBEncrypt(){
@@ -523,7 +617,7 @@ void AES::ECBEncrypt(){
 		} 
 		
 		// 呼叫加密器加密該塊
-		this->encryptor();
+		this->quickEncryptor();
 		
 		// 從state取出加密後的結果
 		for(int j=0;j<16;j++){
@@ -711,6 +805,35 @@ void AES::decryptor(){
 	this->addRoundKey(0);
 }
 
+void AES::quickDecryptor(){
+	
+	
+	this->addRoundKey(this->round);
+	
+	for(int i=this->round-1;i>=0;i--){
+		// 逆行移位
+		this->inverseShiftRows();
+		
+		// 逆T盒代換(最後一次只做逆S盒代換) 
+		if(i==0){
+			this->inverseSBoxSubstitution();
+		} else {
+			this->inverseTBoxSubstitution();
+		}
+
+		// 最後一輪的key不用做inverse mix column 
+		if(i==0){
+			this->addRoundKey(i);
+		} else {
+			this->addInverseMixColumnRoundKey(i);
+		}
+		
+		
+	}
+	
+	
+}
+
 void AES::ECBDecrypt(){
 	// 循環分塊將密文解密 
 	for(int i=0;i<this->ciphertextSize_byte;i+=16){
@@ -724,7 +847,7 @@ void AES::ECBDecrypt(){
 		} 
 		
 		// 呼叫加密器加密該塊
-		this->decryptor();
+		this->quickDecryptor();
 		
 		// 從state取出加密後的結果
 		for(int j=0;j<16;j++){

@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	// ªì©l 
 	try{
 		AESHelper = new AES(AES::AES128, AES::ECB, AES::ZeroPadding);
-		AESHelper->init("t6w9z$C&F)J@NcRf", "1234567890123456");
+		AESHelper->init("1234567890123456", "1234567890123456");
 	} catch (AESException * e){
 		printf("%s", e->getDetail());
 	}
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 	int encryptedSize;
 	
 	try{
-		AESHelper->encrypt("12345678901234567890", strlen("12345678901234567890"), &encrypted, &encryptedSize);
+		AESHelper->encrypt("1234", strlen("1234"), &encrypted, &encryptedSize);
 	} catch (AESException * e){
 		printf("%s", e->getDetail());
 	}
